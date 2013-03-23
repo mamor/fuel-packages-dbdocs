@@ -1,3 +1,5 @@
+# fuel-packages-dbdocs [![Build Status](https://travis-ci.org/mp-php/fuel-packages-dbdocs.png)](https://travis-ci.org/mp-php/fuel-packages-dbdocs)
+
 * fuel-packages-dbdocs is generator for database documentation
 * You can generate database documentation from command line
 * Example(GitLab Database) http://fueldbdocssample.madroom.net/index.html
