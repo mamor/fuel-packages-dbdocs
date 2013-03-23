@@ -4,9 +4,9 @@
 <thead>
 <tr>
 <th style="width:10%;">Platform</th>
-<th style="width:20%;">Database</th>
+<th style="width:15%;">Database</th>
 <th style="width:50%;">Description</th>
-<th style="width:20%;">Generated at</th>
+<th style="width:25%;">Generated at</th>
 </tr>
 </thead>
 
