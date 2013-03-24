@@ -25,22 +25,6 @@ return array(
 				$comment = "<a href=\"table_{$c_table_name}.html#_column_{$c_column_name}\">".$comment.'</a>'
 					."\n<span class=\"_foreign_key\" title=\"{$comment}\" ><i class=\"icon-question-sign\"></i></span>";
 			}
-			else if (empty($comment) && isset($dd->fuel_relations[$table_name]['belongs_to']))
-			{
-				foreach ($dd->fuel_relations[$table_name]['belongs_to'] as $belongs_to)
-				{
-					if($belongs_to['key_from'] == $column_name)
-					{
-						$c_table_name = $belongs_to['table_to'];
-						$c_column_name = $belongs_to['key_to'];
-
-						$comment = "<a href=\"table_{$c_table_name}.html#_column_{$c_column_name}\">".$c_table_name.'.'.$c_column_name.'</a>'
-							."\n<span class=\"_foreign_key\" title=\"{$c_table_name}.{$c_column_name}\" ><i class=\"icon-question-sign\"></i></span>";
-
-						break;
-					}
-				}
-			}
 
 			return $comment;
 		},
@@ -66,7 +50,8 @@ return array(
 					}
 				}
 			}
-			else if (0 < preg_match('/^.+_id$/', $column_name))
+
+			if (empty($ret) and (0 < preg_match('/^.+_id$/', $column_name)))
 			{
 				$table_name = str_replace('_id', '', $column_name);
 
