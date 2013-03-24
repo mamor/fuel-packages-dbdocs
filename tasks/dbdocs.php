@@ -97,6 +97,10 @@ Commands:
   php oil refine dbdocs:mysql  <directory>
   php oil refine dbdocs:pgsql  <directory>
   php oil refine dbdocs:sqlite <directory>
+  php oil refine dbdocs:saveconfig
+  php oil refine dbdocs:deleteconfig
+  php oil refine dbdocs:showconfig
+  php oil refine dbdocs:fromconfig <directory> [config name]
   php oil refine dbdocs:help
 
 Runtime options:
@@ -193,6 +197,153 @@ HELP;
 		static::process();
 	}
 
+	/**
+	 * Save config
+	 *
+	 * Usage (from command line):
+	 * 
+	 * php oil r dbdocs:saveconfig
+	 */
+	public static function saveconfig()
+	{
+		\Config::load('dbdocsconnections', true);
+		$connections = \Config::get('dbdocsconnections', array());
+
+		$name = trim(\Cli::prompt('Config name'));
+
+		$options = array(
+			1 => '1. MySQL',
+			2 => '2. PostgreSQL',
+			3 => '3. SQLite',
+		);
+
+		$platform = \Cli::prompt("Enter a number.\n".implode("\n", $options)."\n", array_flip($options));
+
+		switch ($platform)
+		{
+			case 1: static::$config = static::$config_mysql; break;
+			case 2: static::$config = static::$config_pgsql; break;
+			case 3: static::$config = static::$config_sqlite; break;
+		}
+		static::prompt();
+		static::confirm();
+
+		$connections[$name] = static::$config;
+		\Config::save(PKGPATH.'dbdocs/config/dbdocsconnections.php', $connections);
+
+		\Cli::write("Saved configuration \"{$name}\"", 'green');
+	}
+
+	/**
+	 * Delete config
+	 *
+	 * Usage (from command line):
+	 * 
+	 * php oil r dbdocs:deleteconfig
+	 */
+	public static function deleteconfig()
+	{
+		\Config::load('dbdocsconnections', true);
+		$connections = \Config::get('dbdocsconnections', array());
+
+
+		if (empty($connections))
+		{
+			\Cli::write('Configuration is empty.', 'red');
+		}
+		else
+		{
+			$name = trim(\Cli::prompt("Enter a name.\n", array_keys($connections)));
+			unset($connections[$name]);
+			\Config::save(PKGPATH.'dbdocs/config/dbdocsconnections.php', $connections);
+
+			\Cli::write("Deleted configuration \"{$name}\"", 'green');
+		}
+
+	}
+
+	/**
+	 * Show config
+	 *
+	 * Usage (from command line):
+	 * 
+	 * php oil r dbdocs:showconfig
+	 */
+	public static function showconfig()
+	{
+		\Config::load('dbdocsconnections', true);
+		$connections = \Config::get('dbdocsconnections', array());
+
+		if (empty($connections))
+		{
+			\Cli::write('Configuration is empty.', 'red');
+		}
+		else
+		{
+			$name = trim(\Cli::prompt("Enter a name.\n", array_keys($connections)));
+			\Cli::write(print_r($connections[$name], true), 'green');
+		}
+
+	}
+
+	/**
+	 * Generate documentation from config
+	 *
+	 * Usage (from command line):
+	 * 
+	 * php oil r dbdocs:fromconfig
+	 * 
+	 * @param  $dir Documentation directory
+	 * @param  $name Name of config
+	 */
+	public static function fromconfig($dir = null, $name = null)
+	{
+		if ($dir === null)
+		{
+			static::help();
+			exit();
+		}
+
+		\Config::load('dbdocsconnections', true);
+		$connections = \Config::get('dbdocsconnections', array());
+
+		if (empty($connections))
+		{
+			\Cli::write('Configuration is empty.', 'red');
+		}
+		else
+		{
+			if ($name === null)
+			{
+				$name = trim(\Cli::prompt("Enter a name.\n", array_keys($connections)));
+			}
+			else if ( ! isset($connections[$name]))
+			{
+				\Cli::write("Not Found configuration \"{$name}\"", 'red');
+				exit();
+			}
+
+			\Cli::set_option('n', true);
+
+			foreach ($connections[$name] as $k => $v)
+			{
+				if( ! empty($k) and ($k != 'driver'))
+				{
+					\Cli::set_option($k, $v);
+				}
+
+			}
+
+			switch ($connections[$name]['driver'])
+			{
+				case 'pdo_mysql': static::mysql($dir); break;
+				case 'pdo_pgsql': static::pgsql($dir); break;
+				case 'pdo_sqlite': static::sqlite($dir); break;
+			}
+		}
+
+	}
+
 	/*******************************************************
 	 * Private Methods
 	 ******************************************************/
@@ -244,8 +395,6 @@ HELP;
 		{
 			\Cli::write('System error occurred.', 'red');
 		}
-
-		exit();
 
 	}
 
@@ -299,7 +448,6 @@ HELP;
 	{
 		while(true)
 		{
-			$output = null;
 			$options = array();
 
 			/**
@@ -310,39 +458,29 @@ HELP;
 			{
 				if (($k != 'driver'))
 				{
-					$options[] = $i;
 					$display = ($k === 'password') ? str_pad('', strlen($v), '*') : $v;
-					$output .= '('.$i.') '.$k.':'.$display."\n";
+					$options[$i] = $i.'. '.$k.':'.$display;
 					$i++;
 				}
 			}
 
-			/**
-			 * ok
-			 */
-			$output .= "(y) OK.\n";
-			$options[] = 'y';
+			$options['y'] = 'y. OK.';
+			$options['c'] = 'c. Cancel.';
 
-			/**
-			 * cancel
-			 */
-			$output .= "(c) Cancel.\n";
-			$options[] = 'c';
+			\Cli::write("\nConfirm", 'green');
+			\Cli::write(implode("\n", $options));
 
-			\Cli::write("\nconfirm");
-			\Cli::write($output);
+			$index = \Cli::prompt('Enter a number, "y" or "c".'."\n", array_flip($options));
 
-			$answer = \Cli::prompt('Select a number, "y" or "c".', $options);
-
-			switch ($answer)
+			switch ($index)
 			{
 				case 'y':
 					return;
 				case 'c':
-					\Cli::write('Good bye!!');
+					\Cli::write('Good bye!!', 'green');
 					exit();
 				default:
-					static::prompt($answer);
+					static::prompt($index);
 					break;
 			}
 		}
