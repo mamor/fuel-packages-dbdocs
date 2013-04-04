@@ -9,6 +9,13 @@ You can also use https://github.com/mp-php/fuel-dbdocs
 
 ---
 
+## Supporting databases
+
+* MySQL (pdo_mysql is required)
+* PostgreSQL (pdo_pgsql is required)
+* SQLite (pdo_sqlite is required)
+* Microsoft SQLServer (pdo_sqlsrv is required)
+
 ## Install
 
 ### Getting code

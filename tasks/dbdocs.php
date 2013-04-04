@@ -68,6 +68,21 @@ class Dbdocs
 	);
 
 	/**
+	 * Database connection setting for Microsoft SQLServer
+	 * 
+	 * @var array
+	 */
+	private static $config_mssql = array(
+		'host'     => '',
+		'dbname'   => '',
+		'user'     => '',
+		'password' => '',
+		'charset'  => '',
+		'driver'   => 'pdo_sqlsrv',
+		'description' => '',
+	);
+
+	/**
 	 * Show help
 	 *
 	 * Usage (from command line):
@@ -97,6 +112,7 @@ Commands:
   php oil refine dbdocs:mysql  <directory>
   php oil refine dbdocs:pgsql  <directory>
   php oil refine dbdocs:sqlite <directory>
+  php oil refine dbdocs:mssql  <directory>
   php oil refine dbdocs:saveconfig
   php oil refine dbdocs:deleteconfig
   php oil refine dbdocs:showconfig
@@ -108,7 +124,7 @@ Runtime options:
   -n, [--non-interactive] # Non interactive mode
 
 Runtime options with non interactive mode:
-MySQL and PostgreSQL:
+MySQL, PostgreSQL and SQLServer:
   --host=<host>
   --dbname=<dbname>
   --user=<user>
@@ -198,6 +214,30 @@ HELP;
 	}
 
 	/**
+	 * Generate Database Documentation for Microsoft SQLServer
+	 *
+	 * Usage (from command line):
+	 * 
+	 * php oil r dbdocs:mssql
+	 * 
+	 * @param  $dir Documentation directory
+	 */
+	public static function mssql($dir = null)
+	{
+		static::$config = static::$config_mssql;
+
+		if ($dir === null)
+		{
+			static::help();
+			exit();
+		}
+
+		static::$dir = rtrim($dir, DS).DS.'dbdoc'.DS;
+
+		static::process();
+	}
+
+	/**
 	 * Save config
 	 *
 	 * Usage (from command line):
@@ -215,6 +255,7 @@ HELP;
 			1 => '1. MySQL',
 			2 => '2. PostgreSQL',
 			3 => '3. SQLite',
+			4 => '4. Microsoft SQLServer',
 		);
 
 		$platform = \Cli::prompt("Enter a number.\n".implode("\n", $options)."\n", array_flip($options));
@@ -224,6 +265,7 @@ HELP;
 			case 1: static::$config = static::$config_mysql; break;
 			case 2: static::$config = static::$config_pgsql; break;
 			case 3: static::$config = static::$config_sqlite; break;
+			case 4: static::$config = static::$config_mssql; break;
 		}
 		static::prompt();
 		static::confirm();
@@ -339,6 +381,7 @@ HELP;
 				case 'pdo_mysql': static::mysql($dir); break;
 				case 'pdo_pgsql': static::pgsql($dir); break;
 				case 'pdo_sqlite': static::sqlite($dir); break;
+				case 'pdo_sqlsrv': static::mssql($dir); break;
 			}
 		}
 
