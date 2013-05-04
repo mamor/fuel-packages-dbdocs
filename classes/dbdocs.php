@@ -2,6 +2,15 @@
 
 namespace Dbdocs;
 
+if (file_exists(__DIR__.'/../vendor/autoload.php'))
+{
+	require_once __DIR__.'/../vendor/autoload.php';
+}
+else
+{
+	require_once VENDORPATH.'autoload.php';
+}
+
 /**
  * Generate database documentation utility
  *
@@ -64,8 +73,6 @@ class Dbdocs
 	 */
 	public static function _init()
 	{
-		require_once __DIR__.'/../vendor/autoload.php';
-
 		require_once PKGPATH.'dbdocs/classes/types/pointtype.php';
 
 		! \Doctrine\DBAL\Types\Type::hasType('point') and
