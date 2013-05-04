@@ -17,11 +17,10 @@ You can also use https://github.com/mp-php/fuel-dbdocs
 * Microsoft SQLServer (pdo_sqlsrv is required)
 
 ## Install
-
-### Getting code
-
-	# In FuelPHP project root
-	$ git submodule add git://github.com/mp-php/fuel-packages-dbdocs.git fuel/packages/dbdocs
+### Setup to fuel/packages/dbdocs
+* Use composer https://packagist.org/packages/mp-php/fuel-packages-dbdocs
+* git submodule add
+* Download zip
 
 ### Install vendors
 
