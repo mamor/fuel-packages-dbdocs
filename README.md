@@ -22,10 +22,9 @@ You can also use https://github.com/mp-php/fuel-dbdocs
 * git submodule add
 * Download zip
 
-### Install vendors
+If you use git submodule, you must install vendors
 
 	$ cd fuel/packages/dbdocs
-	$ curl -s http://getcomposer.org/installer | php
 	$ php composer.phar install
 
 ### Configuration
