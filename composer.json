@@ -1,5 +1,9 @@
 {
+	"name": "mp-php/fuel-packages-dbdocs",
+	"type": "fuel-package",
 	"require": {
+		"composer/installers": "*",
+
 		"doctrine/orm": "2.*",
 		"symfony/console": "2.*",
 		"symfony/yaml": "2.*",
@@ -7,5 +11,14 @@
 	},
 	"autoload": {
 		"psr-0": {"": "entities"}
-	}
+	},
+	"extra": {
+		"installer-name": "dbdocs"
+	},
+	"authors": [
+		{
+			"name": "Mamoru Otsuka"
+		}
+	],
+	"license": "MIT"
 }
