@@ -73,7 +73,11 @@ class Dbdocs
 	 */
 	public static function _init()
 	{
+		require_once PKGPATH.'dbdocs/classes/types/enumtype.php';
 		require_once PKGPATH.'dbdocs/classes/types/pointtype.php';
+
+		! \Doctrine\DBAL\Types\Type::hasType('enum') and
+			\Doctrine\DBAL\Types\Type::addType('enum', 'Dbdocs\Types_EnumType');
 
 		! \Doctrine\DBAL\Types\Type::hasType('point') and
 			\Doctrine\DBAL\Types\Type::addType('point', 'Dbdocs\Types_PointType');
@@ -92,6 +96,7 @@ class Dbdocs
 
 		$this->conn = \Doctrine\DBAL\DriverManager::getConnection($this->config);
 
+		$this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'enum');
 		$this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('point', 'point');
 
 		$this->sm = $this->conn->getSchemaManager();
