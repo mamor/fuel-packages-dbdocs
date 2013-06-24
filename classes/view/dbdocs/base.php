@@ -76,7 +76,8 @@ abstract class View_Dbdocs_Base extends \Fuel\Core\ViewModel
 							$ret[$index->getName()]['extras'] = array_flip($flip);
 						}
 
-						$ret[$index->getName()]['extras'][] = 'FK';
+						! in_array('FK', $ret[$index->getName()]['extras']) and
+							$ret[$index->getName()]['extras'][] = 'FK';
 					}
 
 				}
