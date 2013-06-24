@@ -26,7 +26,7 @@ class Test_View_Dbdocs_Index extends Dbdocs_ViewModelTestCase
 		$html =
 			\ViewModel::forge('dbdocs/index')
 			->set('information', static::$dd->get_information())
-			->set('description', static::$dd->config['description'])
+			->set('description', isset(static::$dd->config['description']) ? static::$dd->config['description'] : '')
 			->set('__tables', static::$dd->get_tables())
 			->set('__views', static::$dd->get_views())
 			->render();
@@ -55,7 +55,7 @@ class Test_View_Dbdocs_Index extends Dbdocs_ViewModelTestCase
 		 * check description
 		 */
 		$output = $tbody->getElementsByTagName('td')->item(2)->nodeValue;
-		$expected = static::$dd->config['description'];
+		$expected = isset(static::$dd->config['description']) ? static::$dd->config['description'] : '';
 		$this->assertEquals($expected, $output);
 	}
 
